@@ -122,7 +122,8 @@
           "outputs": ["coverage/apps/dashboard"],
           "options": {
             "jestConfig": "apps/dashboard/jest.config.js",
-            "passWithNoTests": true
+            "passWithNoTests": true,
+            "codeCoverage": true
           }
         }
       }
@@ -164,7 +165,8 @@
           "outputs": ["coverage/libs/core-data"],
           "options": {
             "jestConfig": "libs/core-data/jest.config.js",
-            "passWithNoTests": true
+            "passWithNoTests": true,
+            "codeCoverage": true
           }
         },
         "lint": {
@@ -189,7 +191,8 @@
           "outputs": ["coverage/libs/core-state"],
           "options": {
             "jestConfig": "libs/core-state/jest.config.js",
-            "passWithNoTests": true
+            "passWithNoTests": true,
+            "codeCoverage": true
           }
         },
         "lint": {
@@ -214,7 +217,8 @@
           "outputs": ["coverage/libs/material"],
           "options": {
             "jestConfig": "libs/material/jest.config.js",
-            "passWithNoTests": true
+            "passWithNoTests": true,
+            "codeCoverage": true
           }
         },
         "lint": {
@@ -248,6 +252,31 @@
             "lintFilePatterns": [
               "libs/api-interfaces/src/**/*.ts",
               "libs/api-interfaces/src/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "testing": {
+      "projectType": "library",
+      "root": "libs/testing",
+      "sourceRoot": "libs/testing/src",
+      "prefix": "bba",
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/testing"],
+          "options": {
+            "jestConfig": "libs/testing/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/testing/src/**/*.ts",
+              "libs/testing/src/**/*.html"
             ]
           }
         }
