@@ -25,7 +25,7 @@ export class CollectorDetailsComponent {
   separatorKeysCodes: number[] = [ENTER, COMMA];
   @Input() comics;
   @Input() set collector(value: Collector) {
-    if (value) this.originalTitle = `${value.title} `;
+    if (value) this.originalTitle = `${value.firstName} ${value.lastName}`;
     this.currentCollector = { ...value };
   }
   @Output() savedComic = new EventEmitter();
