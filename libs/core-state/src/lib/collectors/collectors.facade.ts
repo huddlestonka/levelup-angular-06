@@ -1,32 +1,69 @@
 import { Injectable } from '@angular/core';
-
-import { select, Store, Action } from '@ngrx/store';
-
+import { Collector } from '@bba/api-interfaces';
+import { Action, ActionsSubject, select, Store } from '@ngrx/store';
+import { filter } from 'rxjs/operators';
+import { v4 as uuidv4 } from 'uuid';
+import { getCollectorComics } from '..';
 import * as CollectorsActions from './collectors.actions';
-import * as CollectorsFeature from './collectors.reducer';
+import * as fromCollectors from './collectors.reducer';
 import * as CollectorsSelectors from './collectors.selectors';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class CollectorsFacade {
-  /**
-   * Combine pieces of state using createSelector,
-   * and expose them as observables through the facade.
-   */
   loaded$ = this.store.pipe(select(CollectorsSelectors.getCollectorsLoaded));
   allCollectors$ = this.store.pipe(
     select(CollectorsSelectors.getAllCollectors)
   );
-  selectedCollectors$ = this.store.pipe(
-    select(CollectorsSelectors.getSelected)
+  selectedCollector$ = this.store.pipe(
+    select(CollectorsSelectors.getSelectedCollector)
+  );
+  collectorComics$ = this.store.pipe(select(getCollectorComics));
+
+  mutations$ = this.actions$.pipe(
+    filter(
+      (action: Action) =>
+        action.type === CollectorsActions.createCollector({} as any).type ||
+        action.type === CollectorsActions.updateCollector({} as any).type ||
+        action.type === CollectorsActions.deleteCollector({} as any).type
+    )
   );
 
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store<fromCollectors.CollectorsPartialState>,
+    private actions$: ActionsSubject
+  ) {}
 
-  /**
-   * Use the initialization action to perform one
-   * or more tasks in your Effects.
-   */
-  init() {
-    this.store.dispatch(CollectorsActions.init());
+  selectCollector(selectedId: string) {
+    this.dispatch(CollectorsActions.selectCollector({ selectedId }));
+  }
+
+  loadCollectors() {
+    this.dispatch(CollectorsActions.loadCollectors());
+  }
+
+  loadCollector(collectorId: string) {
+    this.dispatch(CollectorsActions.loadCollector({ collectorId }));
+  }
+
+  createCollector(collector: Collector) {
+    this.dispatch(
+      CollectorsActions.createCollector({
+        collector: Object.assign({}, collector, { id: uuidv4() }),
+      })
+    );
+  }
+
+  updateCollector(collector: Collector) {
+    this.dispatch(CollectorsActions.updateCollector({ collector }));
+  }
+
+  deleteCollector(collector: Collector) {
+    this.dispatch(CollectorsActions.deleteCollector({ collector }));
+  }
+
+  dispatch(action: Action) {
+    this.store.dispatch(action);
   }
 }

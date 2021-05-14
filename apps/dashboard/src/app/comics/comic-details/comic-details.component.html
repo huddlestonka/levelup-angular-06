@@ -1,1 +1,69 @@
-<p>comic-details works!</p>
+<mat-card>
+  <mat-card-title data-cy="comic-details-title">
+    <span *ngIf="currentComic.id; else elseBlock">
+      Editing {{ originalTitle }}
+    </span>
+    <ng-template #elseBlock> Select Comic </ng-template>
+  </mat-card-title>
+  <form #form="ngForm" (submit)="saved.emit(currentComic)" data-cy="comic-form">
+    <mat-card-content>
+      <mat-form-field class="full-width">
+        <input
+          matInput
+          placeholder="Title"
+          data-cy="comic-form-title"
+          [(ngModel)]="currentComic.title"
+          type="text"
+          name="title"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <input
+          matInput
+          placeholder="Description"
+          data-cy="comic-form-description"
+          [(ngModel)]="currentComic.description"
+          type="text"
+          name="description"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Select a Collector</mat-label>
+        <mat-select
+          [(ngModel)]="currentComic.collectorId"
+          data-cy="comic-form-collector"
+          required="false"
+          name="collectorId"
+        >
+          <mat-option
+            *ngFor="let collector of collectors"
+            [value]="collector.id"
+          >
+            {{ collector.firstName }} {{ collector.lastName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button
+        [disabled]="form.invalid"
+        type="submit"
+        mat-button
+        color="primary"
+        data-cy="comic-form-save"
+      >
+        Save
+      </button>
+      <button
+        type="button"
+        mat-button
+        (click)="form.reset(); cancelled.emit()"
+        data-cy="comic-form-cancel"
+      >
+        Cancel
+      </button>
+    </mat-card-actions>
+  </form>
+</mat-card>

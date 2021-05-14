@@ -1,25 +1,32 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StoreModule } from '@ngrx/store';
+import { NgModule } from '@angular/core';
 import { EffectsModule } from '@ngrx/effects';
-import * as fromCollectors from './collectors/collectors.reducer';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { RootStoreConfig, StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+
+import { reducers } from '.';
+
 import { CollectorsEffects } from './collectors/collectors.effects';
-import { CollectorsFacade } from './collectors/collectors.facade';
-import * as fromComics from './comics/comics.reducer';
 import { ComicsEffects } from './comics/comics.effects';
-import { ComicsFacade } from './comics/comics.facade';
+
+const STORE_NAME = 'bba-store';
+const storeConfig: RootStoreConfig<any> = {
+  runtimeChecks: {
+    strictActionImmutability: true,
+    strictActionSerializability: true,
+    strictStateImmutability: true,
+    strictStateSerializability: true,
+  },
+};
 
 @NgModule({
   imports: [
     CommonModule,
-    StoreModule.forFeature(
-      fromCollectors.COLLECTORS_FEATURE_KEY,
-      fromCollectors.reducer
-    ),
-    EffectsModule.forFeature([CollectorsEffects]),
-    StoreModule.forFeature(fromComics.COMICS_FEATURE_KEY, fromComics.reducer),
-    EffectsModule.forFeature([ComicsEffects]),
+    StoreModule.forRoot(reducers, storeConfig),
+    EffectsModule.forRoot([CollectorsEffects, ComicsEffects]),
+    StoreDevtoolsModule.instrument({ maxAge: 25, name: STORE_NAME }),
+    StoreRouterConnectingModule.forRoot({ stateKey: 'router' }),
   ],
-  providers: [CollectorsFacade, ComicsFacade],
 })
 export class CoreStateModule {}

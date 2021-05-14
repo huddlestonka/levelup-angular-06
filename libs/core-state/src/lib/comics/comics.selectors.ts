@@ -1,13 +1,13 @@
+import { Comic } from '@bba/api-interfaces';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import {
   COMICS_FEATURE_KEY,
-  State,
-  ComicsPartialState,
+  ComicsState,
   comicsAdapter,
 } from './comics.reducer';
 
 // Lookup the 'Comics' feature state managed by NgRx
-export const getComicsState = createFeatureSelector<ComicsPartialState, State>(
+export const getComicsState = createFeatureSelector<ComicsState>(
   COMICS_FEATURE_KEY
 );
 
@@ -15,30 +15,41 @@ const { selectAll, selectEntities } = comicsAdapter.getSelectors();
 
 export const getComicsLoaded = createSelector(
   getComicsState,
-  (state: State) => state.loaded
+  (state: ComicsState) => state.loaded
 );
 
 export const getComicsError = createSelector(
   getComicsState,
-  (state: State) => state.error
+  (state: ComicsState) => state.error
 );
 
-export const getAllComics = createSelector(getComicsState, (state: State) =>
-  selectAll(state)
+export const getAllComics = createSelector(
+  getComicsState,
+  (state: ComicsState) => selectAll(state)
 );
 
 export const getComicsEntities = createSelector(
   getComicsState,
-  (state: State) => selectEntities(state)
+  (state: ComicsState) => selectEntities(state)
 );
 
-export const getSelectedId = createSelector(
+export const getSelectedComicId = createSelector(
   getComicsState,
-  (state: State) => state.selectedId
+  (state: ComicsState) => state.selectedId
 );
 
-export const getSelected = createSelector(
+export const getSelectedComic = createSelector(
   getComicsEntities,
-  getSelectedId,
-  (entities, selectedId) => selectedId && entities[selectedId]
+  getSelectedComicId,
+  (entities, selectedId) => {
+    const emptyComic: Comic = {
+      id: '',
+      title: '',
+      description: '',
+      genre: '',
+      collectorId: '',
+    };
+
+    return selectedId ? entities[selectedId] : emptyComic;
+  }
 );

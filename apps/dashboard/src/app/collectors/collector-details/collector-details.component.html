@@ -1,1 +1,118 @@
-<p>collector-details works!</p>
+<mat-card>
+  <mat-card-title data-cy="collector-details-title">
+    <span *ngIf="currentCollector.id; else elseBlock">
+      Editing {{ originalTitle }}
+    </span>
+    <ng-template #elseBlock> Select Collector </ng-template>
+  </mat-card-title>
+  <form
+    #form="ngForm"
+    (submit)="savedCollector.emit(currentCollector); savedComic.emit(comics)"
+    data-cy="collector-form"
+  >
+    <mat-card-content>
+      <mat-form-field class="full-width">
+        <input
+          matInput
+          placeholder="Title"
+          data-cy="collector-form-title"
+          [(ngModel)]="currentCollector.title"
+          type="text"
+          name="title"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <input
+          matInput
+          placeholder="First Name"
+          data-cy="collector-form-firstName"
+          [(ngModel)]="currentCollector.firstName"
+          type="text"
+          name="firstName"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <input
+          matInput
+          placeholder="Last Name"
+          data-cy="collector-form-lastName"
+          [(ngModel)]="currentCollector.lastName"
+          type="text"
+          name="lastName"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <input
+          matInput
+          placeholder="Favorite Genre"
+          data-cy="collector-form-favoriteGenre"
+          [(ngModel)]="currentCollector.favoriteGenre"
+          type="text"
+          name="favoriteGenre"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <input
+          matInput
+          placeholder="Years Collecting"
+          data-cy="collector-form-timeCollecting"
+          [(ngModel)]="currentCollector.timeCollecting"
+          type="text"
+          name="timeCollecting"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field
+        class="example-chip-list"
+        *ngIf="checkComics(); else noComics"
+      >
+        <mat-label>Comics</mat-label>
+        <mat-chip-list #chipList aria-label="Comic selection">
+          <mat-chip
+            *ngFor="let al of currentCollector.comics"
+            [selectable]="selectable"
+            [removable]="removable"
+            (removed)="remove(al?.id)"
+          >
+            {{ al?.title }}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+          <input
+            name="addComic"
+            placeholder="New comic..."
+            #comicInput
+            autocomplete="off"
+            matTooltip="Press enter and click save to add a comic"
+            [matChipInputFor]="chipList"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="add($event)"
+          />
+        </mat-chip-list>
+      </mat-form-field>
+      <ng-template #noComics> No Comics </ng-template>
+    </mat-card-content>
+    <mat-card-actions>
+      <button
+        [disabled]="form.invalid"
+        type="submit"
+        mat-button
+        color="primary"
+        data-cy="collector-form-save"
+      >
+        Save
+      </button>
+      <button
+        type="button"
+        mat-button
+        (click)="form.reset(); cancelled.emit()"
+        data-cy="collector-form-cancel"
+      >
+        Cancel
+      </button>
+    </mat-card-actions>
+  </form>
+</mat-card>

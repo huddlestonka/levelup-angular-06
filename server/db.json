@@ -1,0 +1,75 @@
+{
+  "collectors": [
+    {
+      "id": "56789f40-b0fb-4aa6-8e88-376b4edfm8he",
+      "title": "Gundam Geek",
+      "firstName": "Kaleb",
+      "lastName": "Huddleston",
+      "favoriteGenre": "Manga",
+      "timeCollecting": "1yr",
+      "comics": [
+        {
+          "id": "56789f40-b0fb-4aa6-4e88-376b4edfm8he",
+          "title": "Mobile Suit Gundam: THE ORIGIN, Volume I: Activation",
+          "description": "The beginning of it all...",
+          "genre": "manga",
+          "collectorId": "56789f40-b0fb-4aa6-8e88-376b4edfm8he"
+        },
+        {
+          "id": "567898j0-b0fb-4aa6-4e88-376b4e0lk8he",
+          "title": "Mobile Suit Gundam: THE ORIGIN, Volume II: Garma",
+          "description": "Things are heating up...",
+          "genre": "manga",
+          "collectorId": "56789f40-b0fb-4aa6-8e88-376b4edfm8he"
+        }
+      ]
+    },
+    {
+      "id": "652dea3b-aec1-4746-a8f2-454a13fa0ebd",
+      "firstName": "Bob",
+      "lastName": "Saget",
+      "favoriteGenre": "Comedy",
+      "timeCollecting": "never",
+      "title": "New",
+      "comics": [
+        {
+          "id": "d556237e-6621-4b75-8f3f-a5d9c598d26c",
+          "title": "bobs comic",
+          "description": "",
+          "genre": "",
+          "collectorId": ""
+        },
+        {
+          "id": "1696aecf-2a65-4090-828d-49e85ed37a36",
+          "title": "Bobby",
+          "description": "",
+          "genre": "",
+          "collectorId": "652dea3b-aec1-4746-a8f2-454a13fa0ebd"
+        }
+      ]
+    }
+  ],
+  "comics": [
+    {
+      "id": "56789f40-b0fb-4aa6-4e88-376b4edfm8he",
+      "title": "Mobile Suit Gundam: THE ORIGIN, Volume I: Activation",
+      "description": "The beginning of it all...",
+      "genre": "manga",
+      "collectorId": "56789f40-b0fb-4aa6-8e88-376b4edfm8he"
+    },
+    {
+      "id": "567898j0-b0fb-4aa6-4e88-376b4e0lk8he",
+      "title": "Mobile Suit Gundam: THE ORIGIN, Volume II: Garma",
+      "description": "Things are heating up...",
+      "genre": "manga",
+      "collectorId": "56789f40-b0fb-4aa6-8e88-376b4edfm8he"
+    },
+    {
+      "id": "1c4565c3-0907-4d70-866b-7b438a359443",
+      "title": "Batman",
+      "description": "The Dark Knight",
+      "genre": "",
+      "collectorId": "652dea3b-aec1-4746-a8f2-454a13fa0ebd"
+    }
+  ]
+}

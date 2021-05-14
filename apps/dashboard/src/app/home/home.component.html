@@ -1,1 +1,22 @@
-<p>home works!</p>
+<div class="home-container" data-cy="home-collector-cards">
+  <mat-card
+    *ngFor="let collector of collectorComics$ | async"
+    attr.data-cy="home-collector-{{ collector.id }}-card"
+  >
+    <mat-card-header>
+      <mat-card-title attr.data-cy="home-collector-{{ collector.id }}-title">
+        {{ collector.firstName }} {{ collector.lastName }}
+      </mat-card-title>
+      <mat-card-subtitle>{{ collector.title }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <bba-comics-list
+        attr.data-cy="home-collector-{{ collector.id }}-comics"
+        [comics]="collector.comics"
+        [readonly]="true"
+      >
+      </bba-comics-list>
+    </mat-card-content>
+    <ng-template #noComics> No Comics </ng-template>
+  </mat-card>
+</div>

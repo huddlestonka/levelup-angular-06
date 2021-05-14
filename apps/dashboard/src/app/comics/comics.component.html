@@ -1,1 +1,19 @@
-<p>comics works!</p>
+<div class="component-container">
+  <div class="list-component">
+    <bba-comics-list
+      [comics]="comics$ | async"
+      (selected)="selectComic($event)"
+      (deleted)="deleteComic($event)"
+    >
+    </bba-comics-list>
+  </div>
+  <div class="details-component">
+    <bba-comic-details
+      [comic]="selectedComic$ | async"
+      [collectors]="collectors$ | async"
+      (saved)="saveComic($event)"
+      (cancelled)="resetForm()"
+    >
+    </bba-comic-details>
+  </div>
+</div>

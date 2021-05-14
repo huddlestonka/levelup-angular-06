@@ -1,1 +1,28 @@
-<p>comics-list works!</p>
+<mat-card>
+  <mat-card-title> Comics </mat-card-title>
+  <mat-card-content>
+    <mat-list data-cy="comics-list">
+      <mat-list-item
+        *ngFor="let comic of comics"
+        attr.data-cy="comic-{{ comic.id }}-item"
+        class="mat-list-option"
+        (click)="selected.emit(comic)"
+        data-cy="list-item"
+      >
+        <span matLine attr.data-cy="comic-{{ comic.id }}-item-title">
+          {{ comic.title }}</span
+        >
+        <button
+          *ngIf="!readonly"
+          attr.data-cy="delete-comic-{{ comic.id }}-btn"
+          mat-icon-button
+          type="button"
+          color="warn"
+          (click)="deleted.emit(comic); $event.stopImmediatePropagation()"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

@@ -1,1 +1,20 @@
-<p>collectors works!</p>
+<div class="component-container">
+  <div class="list-component">
+    <bba-collectors-list
+      [collectors]="collectors$ | async"
+      (selected)="selectCollector($event)"
+      (deleted)="deleteCollector($event)"
+    >
+    </bba-collectors-list>
+  </div>
+  <div class="details-component">
+    <bba-collector-details
+      [collector]="selectedCollector$ | async"
+      [comics]="comics$ | async"
+      (savedCollector)="saveCollector($event)"
+      (savedComic)="saveComic($event)"
+      (cancelled)="resetForm()"
+    >
+    </bba-collector-details>
+  </div>
+</div>

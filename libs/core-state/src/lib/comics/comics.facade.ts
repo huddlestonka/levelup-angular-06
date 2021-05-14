@@ -1,28 +1,63 @@
 import { Injectable } from '@angular/core';
-
-import { select, Store, Action } from '@ngrx/store';
-
+import { Comic } from '@bba/api-interfaces';
+import { Action, ActionsSubject, select, Store } from '@ngrx/store';
+import { filter } from 'rxjs/operators';
+import { v4 as uuidv4 } from 'uuid';
 import * as ComicsActions from './comics.actions';
-import * as ComicsFeature from './comics.reducer';
+import * as fromComics from './comics.reducer';
 import * as ComicsSelectors from './comics.selectors';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ComicsFacade {
-  /**
-   * Combine pieces of state using createSelector,
-   * and expose them as observables through the facade.
-   */
   loaded$ = this.store.pipe(select(ComicsSelectors.getComicsLoaded));
   allComics$ = this.store.pipe(select(ComicsSelectors.getAllComics));
-  selectedComics$ = this.store.pipe(select(ComicsSelectors.getSelected));
+  selectedComic$ = this.store.pipe(select(ComicsSelectors.getSelectedComic));
 
-  constructor(private store: Store) {}
+  mutations$ = this.actions$.pipe(
+    filter(
+      (action: Action) =>
+        action.type === ComicsActions.createComic({} as any).type ||
+        action.type === ComicsActions.updateComic({} as any).type ||
+        action.type === ComicsActions.deleteComic({} as any).type
+    )
+  );
 
-  /**
-   * Use the initialization action to perform one
-   * or more tasks in your Effects.
-   */
-  init() {
-    this.store.dispatch(ComicsActions.init());
+  constructor(
+    private store: Store<fromComics.ComicsPartialState>,
+    private actions$: ActionsSubject
+  ) {}
+
+  selectComic(selectedId: string) {
+    this.dispatch(ComicsActions.selectComic({ selectedId }));
+  }
+
+  loadComics() {
+    this.dispatch(ComicsActions.loadComics());
+  }
+
+  loadComic(comicId: string) {
+    this.dispatch(ComicsActions.loadComic({ comicId }));
+  }
+
+  createComic(comic: Comic) {
+    this.dispatch(
+      ComicsActions.createComic({
+        comic: Object.assign({}, comic, { id: uuidv4() }),
+      })
+    );
+  }
+
+  updateComic(comic: Comic) {
+    this.dispatch(ComicsActions.updateComic({ comic }));
+  }
+
+  deleteComic(comic: Comic) {
+    this.dispatch(ComicsActions.deleteComic({ comic }));
+  }
+
+  dispatch(action: Action) {
+    this.store.dispatch(action);
   }
 }

@@ -1,15 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Comic } from '@bba/api-interfaces';
 
 @Component({
   selector: 'bba-comics-list',
   templateUrl: './comics-list.component.html',
-  styleUrls: ['./comics-list.component.scss']
+  styleUrls: ['./comics-list.component.scss'],
 })
-export class ComicsListComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+export class ComicsListComponent {
+  @Input() comics: Comic[];
+  @Input() readonly = false;
+  @Output() selected = new EventEmitter();
+  @Output() deleted = new EventEmitter();
 }

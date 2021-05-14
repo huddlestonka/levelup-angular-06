@@ -8,7 +8,7 @@ export interface Collector extends BaseEntity {
   lastName: string;
   favoriteGenre: string;
   timeCollecting: string;
-  comic?: Comic[];
+  comics?: Comic[];
 }
 
 export interface Comic extends BaseEntity {

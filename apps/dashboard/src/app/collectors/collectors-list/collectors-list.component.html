@@ -1,1 +1,28 @@
-<p>collectors-list works!</p>
+<mat-card>
+  <mat-card-title> Collectors </mat-card-title>
+  <mat-card-content>
+    <mat-list data-cy="collectors-list">
+      <mat-list-item
+        *ngFor="let collector of collectors"
+        attr.data-cy="collector-{{ collector.id }}-item"
+        class="mat-list-option"
+        (click)="selected.emit(collector)"
+        data-cy="list-item"
+      >
+        <span matLine attr.data-cy="collector-{{ collector.id }}-item-title">
+          {{ collector.firstName }} {{ collector.lastName }}</span
+        >
+        <button
+          *ngIf="!readonly"
+          attr.data-cy="delete-collector-{{ collector.id }}-btn"
+          mat-icon-button
+          type="button"
+          color="warn"
+          (click)="deleted.emit(collector); $event.stopImmediatePropagation()"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>
