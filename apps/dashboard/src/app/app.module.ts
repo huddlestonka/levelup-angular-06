@@ -11,10 +11,31 @@ import { ComicsComponent } from './comics/comics.component';
 import { ComicDetailsComponent } from './comics/comic-details/comic-details.component';
 import { ComicsListComponent } from './comics/comics-list/comics-list.component';
 import { HomeComponent } from './home/home.component';
+import { MaterialModule } from '@bba/material';
+import { RoutingModule } from './routing.module';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
-  declarations: [AppComponent, CollectorsComponent, CollectorDetailsComponent, CollectorsListComponent, ComicsComponent, ComicDetailsComponent, ComicsListComponent, HomeComponent],
-  imports: [BrowserModule, BrowserAnimationsModule, StoreModule.forRoot({}, {})],
+  declarations: [
+    AppComponent,
+    CollectorsComponent,
+    CollectorDetailsComponent,
+    CollectorsListComponent,
+    ComicsComponent,
+    ComicDetailsComponent,
+    ComicsListComponent,
+    HomeComponent,
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    MaterialModule,
+    RoutingModule,
+    FormsModule,
+    StoreModule.forRoot({}, {}),
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })
