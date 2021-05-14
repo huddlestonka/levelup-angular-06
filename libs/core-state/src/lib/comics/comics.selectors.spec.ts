@@ -1,15 +1,18 @@
-import { ComicsEntity } from './comics.models';
-import { State, comicsAdapter, initialState } from './comics.reducer';
+import {
+  ComicsState,
+  comicsAdapter,
+  initialComicsState,
+} from './comics.reducer';
 import * as ComicsSelectors from './comics.selectors';
+
+import { Comic } from '@bba/api-interfaces';
+import { mockComic } from '@bba/testing';
 
 describe('Comics Selectors', () => {
   const ERROR_MSG = 'No Error Available';
   const getComicsId = (it) => it['id'];
-  const createComicsEntity = (id: string, name = '') =>
-    ({
-      id,
-      name: name || `name-${id}`,
-    } as ComicsEntity);
+  const createComic = (id: string, name = '') =>
+    ({ ...mockComic, id: id } as Comic);
 
   let state;
 
@@ -17,12 +20,12 @@ describe('Comics Selectors', () => {
     state = {
       comics: comicsAdapter.setAll(
         [
-          createComicsEntity('PRODUCT-AAA'),
-          createComicsEntity('PRODUCT-BBB'),
-          createComicsEntity('PRODUCT-CCC'),
+          createComic('PRODUCT-AAA'),
+          createComic('PRODUCT-BBB'),
+          createComic('PRODUCT-CCC'),
         ],
         {
-          ...initialState,
+          ...initialComicsState,
           selectedId: 'PRODUCT-BBB',
           error: ERROR_MSG,
           loaded: true,
@@ -41,7 +44,7 @@ describe('Comics Selectors', () => {
     });
 
     it('getSelected() should return the selected Entity', () => {
-      const result = ComicsSelectors.getSelected(state);
+      const result = ComicsSelectors.getSelectedComic(state);
       const selId = getComicsId(result);
 
       expect(selId).toBe('PRODUCT-BBB');

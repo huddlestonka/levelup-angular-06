@@ -1,118 +1,106 @@
-import { NgModule } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { readFirst } from '@nrwl/angular/testing';
+import { ActionsSubject } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
-import { EffectsModule } from '@ngrx/effects';
-import { StoreModule, Store } from '@ngrx/store';
-
-import { NxModule } from '@nrwl/angular';
-
-import { ComicsEntity } from './comics.models';
-import { ComicsEffects } from './comics.effects';
 import { ComicsFacade } from './comics.facade';
-
-import * as ComicsSelectors from './comics.selectors';
 import * as ComicsActions from './comics.actions';
-import {
-  COMICS_FEATURE_KEY,
-  State,
-  initialState,
-  reducer,
-} from './comics.reducer';
+import { initialComicsState } from './comics.reducer';
 
-interface TestSchema {
-  comics: State;
-}
+import { mockComic } from '@bba/testing';
 
 describe('ComicsFacade', () => {
   let facade: ComicsFacade;
-  let store: Store<TestSchema>;
-  const createComicsEntity = (id: string, name = '') =>
-    ({
-      id,
-      name: name || `name-${id}`,
-    } as ComicsEntity);
+  let actionSubject;
+  const mockActionsSubject = new ActionsSubject();
+  let store: MockStore;
 
-  beforeEach(() => {});
-
-  describe('used in NgModule', () => {
-    beforeEach(() => {
-      @NgModule({
-        imports: [
-          StoreModule.forFeature(COMICS_FEATURE_KEY, reducer),
-          EffectsModule.forFeature([ComicsEffects]),
-        ],
-        providers: [ComicsFacade],
-      })
-      class CustomFeatureModule {}
-
-      @NgModule({
-        imports: [
-          NxModule.forRoot(),
-          StoreModule.forRoot({}),
-          EffectsModule.forRoot([]),
-          CustomFeatureModule,
-        ],
-      })
-      class RootModule {}
-      TestBed.configureTestingModule({ imports: [RootModule] });
-
-      store = TestBed.inject(Store);
-      facade = TestBed.inject(ComicsFacade);
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        ComicsFacade,
+        provideMockStore({ initialState: initialComicsState }),
+        { provide: ActionsSubject, useValue: mockActionsSubject },
+      ],
     });
 
-    /**
-     * The initially generated facade::loadAll() returns empty array
-     */
-    it('loadAll() should return empty list with loaded == true', async (done) => {
-      try {
-        let list = await readFirst(facade.allComics$);
-        let isLoaded = await readFirst(facade.loaded$);
+    facade = TestBed.inject(ComicsFacade);
+    actionSubject = TestBed.inject(ActionsSubject);
+    store = TestBed.inject(MockStore);
+  });
 
-        expect(list.length).toBe(0);
-        expect(isLoaded).toBe(false);
+  it('should be created', () => {
+    expect(facade).toBeTruthy();
+  });
 
-        facade.init();
+  it('should have mutations', (done) => {
+    const action = ComicsActions.createComic({ comic: mockComic });
+    actionSubject.next(action);
 
-        list = await readFirst(facade.allComics$);
-        isLoaded = await readFirst(facade.loaded$);
+    facade.mutations$.subscribe((result) => {
+      expect(result).toBe(action);
+      done();
+    });
+  });
 
-        expect(list.length).toBe(0);
-        expect(isLoaded).toBe(true);
+  describe('should dispatch', () => {
+    it('select on select(comic.id)', () => {
+      const spy = jest.spyOn(store, 'dispatch');
 
-        done();
-      } catch (err) {
-        done.fail(err);
-      }
+      facade.selectComic(mockComic.id);
+
+      const action = ComicsActions.selectComic({ selectedId: mockComic.id });
+
+      expect(spy).toHaveBeenCalledWith(action);
     });
 
-    /**
-     * Use `loadComicsSuccess` to manually update list
-     */
-    it('allComics$ should return the loaded list; and loaded flag == true', async (done) => {
-      try {
-        let list = await readFirst(facade.allComics$);
-        let isLoaded = await readFirst(facade.loaded$);
+    it('loadComics on loadComics()', () => {
+      const spy = jest.spyOn(store, 'dispatch');
 
-        expect(list.length).toBe(0);
-        expect(isLoaded).toBe(false);
+      facade.loadComics();
 
-        store.dispatch(
-          ComicsActions.loadComicsSuccess({
-            comics: [createComicsEntity('AAA'), createComicsEntity('BBB')],
-          })
-        );
+      const action = ComicsActions.loadComics();
 
-        list = await readFirst(facade.allComics$);
-        isLoaded = await readFirst(facade.loaded$);
+      expect(spy).toHaveBeenCalledWith(action);
+    });
 
-        expect(list.length).toBe(2);
-        expect(isLoaded).toBe(true);
+    it('loadComic on loadComic(comic.id)', () => {
+      const spy = jest.spyOn(store, 'dispatch');
 
-        done();
-      } catch (err) {
-        done.fail(err);
-      }
+      facade.loadComic(mockComic.id);
+
+      const action = ComicsActions.loadComic({ comicId: mockComic.id });
+
+      expect(spy).toHaveBeenCalledWith(action);
+    });
+
+    it('createComic on createComic(comic)', () => {
+      const spy = jest.spyOn(store, 'dispatch');
+
+      facade.createComic(mockComic);
+
+      const action = ComicsActions.createComic({ comic: mockComic });
+
+      expect(spy).toHaveBeenCalledWith(action);
+    });
+
+    it('updateComic on updateComic(comic)', () => {
+      const spy = jest.spyOn(store, 'dispatch');
+
+      facade.updateComic(mockComic);
+
+      const action = ComicsActions.updateComic({ comic: mockComic });
+
+      expect(spy).toHaveBeenCalledWith(action);
+    });
+
+    it('delete on delete(model)', () => {
+      const spy = jest.spyOn(store, 'dispatch');
+
+      facade.deleteComic(mockComic);
+
+      const action = ComicsActions.deleteComic({ comic: mockComic });
+
+      expect(spy).toHaveBeenCalledWith(action);
     });
   });
 });

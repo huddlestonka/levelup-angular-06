@@ -1,121 +1,118 @@
-import { NgModule } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { readFirst } from '@nrwl/angular/testing';
+import { ActionsSubject } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
-import { EffectsModule } from '@ngrx/effects';
-import { StoreModule, Store } from '@ngrx/store';
-
-import { NxModule } from '@nrwl/angular';
-
-import { CollectorsEntity } from './collectors.models';
-import { CollectorsEffects } from './collectors.effects';
 import { CollectorsFacade } from './collectors.facade';
-
-import * as CollectorsSelectors from './collectors.selectors';
 import * as CollectorsActions from './collectors.actions';
-import {
-  COLLECTORS_FEATURE_KEY,
-  State,
-  initialState,
-  reducer,
-} from './collectors.reducer';
+import { initialCollectorsState } from './collectors.reducer';
 
-interface TestSchema {
-  collectors: State;
-}
+import { mockCollector } from '@bba/testing';
 
 describe('CollectorsFacade', () => {
   let facade: CollectorsFacade;
-  let store: Store<TestSchema>;
-  const createCollectorsEntity = (id: string, name = '') =>
-    ({
-      id,
-      name: name || `name-${id}`,
-    } as CollectorsEntity);
+  let actionSubject;
+  const mockActionsSubject = new ActionsSubject();
+  let store: MockStore;
 
-  beforeEach(() => {});
-
-  describe('used in NgModule', () => {
-    beforeEach(() => {
-      @NgModule({
-        imports: [
-          StoreModule.forFeature(COLLECTORS_FEATURE_KEY, reducer),
-          EffectsModule.forFeature([CollectorsEffects]),
-        ],
-        providers: [CollectorsFacade],
-      })
-      class CustomFeatureModule {}
-
-      @NgModule({
-        imports: [
-          NxModule.forRoot(),
-          StoreModule.forRoot({}),
-          EffectsModule.forRoot([]),
-          CustomFeatureModule,
-        ],
-      })
-      class RootModule {}
-      TestBed.configureTestingModule({ imports: [RootModule] });
-
-      store = TestBed.inject(Store);
-      facade = TestBed.inject(CollectorsFacade);
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        CollectorsFacade,
+        provideMockStore({ initialState: initialCollectorsState }),
+        { provide: ActionsSubject, useValue: mockActionsSubject },
+      ],
     });
 
-    /**
-     * The initially generated facade::loadAll() returns empty array
-     */
-    it('loadAll() should return empty list with loaded == true', async (done) => {
-      try {
-        let list = await readFirst(facade.allCollectors$);
-        let isLoaded = await readFirst(facade.loaded$);
+    facade = TestBed.inject(CollectorsFacade);
+    actionSubject = TestBed.inject(ActionsSubject);
+    store = TestBed.inject(MockStore);
+  });
 
-        expect(list.length).toBe(0);
-        expect(isLoaded).toBe(false);
+  it('should be created', () => {
+    expect(facade).toBeTruthy();
+  });
 
-        facade.init();
+  it('should have mutations', (done) => {
+    const action = CollectorsActions.createCollector({
+      collector: mockCollector,
+    });
+    actionSubject.next(action);
 
-        list = await readFirst(facade.allCollectors$);
-        isLoaded = await readFirst(facade.loaded$);
+    facade.mutations$.subscribe((result) => {
+      expect(result).toBe(action);
+      done();
+    });
+  });
 
-        expect(list.length).toBe(0);
-        expect(isLoaded).toBe(true);
+  describe('should dispatch', () => {
+    it('select on select(collector.id)', () => {
+      const spy = jest.spyOn(store, 'dispatch');
 
-        done();
-      } catch (err) {
-        done.fail(err);
-      }
+      facade.selectCollector(mockCollector.id);
+
+      const action = CollectorsActions.selectCollector({
+        selectedId: mockCollector.id,
+      });
+
+      expect(spy).toHaveBeenCalledWith(action);
     });
 
-    /**
-     * Use `loadCollectorsSuccess` to manually update list
-     */
-    it('allCollectors$ should return the loaded list; and loaded flag == true', async (done) => {
-      try {
-        let list = await readFirst(facade.allCollectors$);
-        let isLoaded = await readFirst(facade.loaded$);
+    it('loadCollectors on loadCollectors()', () => {
+      const spy = jest.spyOn(store, 'dispatch');
 
-        expect(list.length).toBe(0);
-        expect(isLoaded).toBe(false);
+      facade.loadCollectors();
 
-        store.dispatch(
-          CollectorsActions.loadCollectorsSuccess({
-            collectors: [
-              createCollectorsEntity('AAA'),
-              createCollectorsEntity('BBB'),
-            ],
-          })
-        );
+      const action = CollectorsActions.loadCollectors();
 
-        list = await readFirst(facade.allCollectors$);
-        isLoaded = await readFirst(facade.loaded$);
+      expect(spy).toHaveBeenCalledWith(action);
+    });
 
-        expect(list.length).toBe(2);
-        expect(isLoaded).toBe(true);
+    it('loadCollector on loadCollector(collector.id)', () => {
+      const spy = jest.spyOn(store, 'dispatch');
 
-        done();
-      } catch (err) {
-        done.fail(err);
-      }
+      facade.loadCollector(mockCollector.id);
+
+      const action = CollectorsActions.loadCollector({
+        collectorId: mockCollector.id,
+      });
+
+      expect(spy).toHaveBeenCalledWith(action);
+    });
+
+    it('createCollector on createCollector(collector)', () => {
+      const spy = jest.spyOn(store, 'dispatch');
+
+      facade.createCollector(mockCollector);
+
+      const action = CollectorsActions.createCollector({
+        collector: mockCollector,
+      });
+
+      expect(spy).toHaveBeenCalledWith(action);
+    });
+
+    it('updateCollector on updateCollector(collector)', () => {
+      const spy = jest.spyOn(store, 'dispatch');
+
+      facade.updateCollector(mockCollector);
+
+      const action = CollectorsActions.updateCollector({
+        collector: mockCollector,
+      });
+
+      expect(spy).toHaveBeenCalledWith(action);
+    });
+
+    it('delete on delete(model)', () => {
+      const spy = jest.spyOn(store, 'dispatch');
+
+      facade.deleteCollector(mockCollector);
+
+      const action = CollectorsActions.deleteCollector({
+        collector: mockCollector,
+      });
+
+      expect(spy).toHaveBeenCalledWith(action);
     });
   });
 });

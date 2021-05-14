@@ -1,15 +1,18 @@
-import { CollectorsEntity } from './collectors.models';
-import { State, collectorsAdapter, initialState } from './collectors.reducer';
+import {
+  CollectorsState,
+  collectorsAdapter,
+  initialCollectorsState,
+} from './collectors.reducer';
 import * as CollectorsSelectors from './collectors.selectors';
+
+import { Collector } from '@bba/api-interfaces';
+import { mockCollector } from '@bba/testing';
 
 describe('Collectors Selectors', () => {
   const ERROR_MSG = 'No Error Available';
   const getCollectorsId = (it) => it['id'];
-  const createCollectorsEntity = (id: string, name = '') =>
-    ({
-      id,
-      name: name || `name-${id}`,
-    } as CollectorsEntity);
+  const createCollector = (id: string, name = '') =>
+    ({ ...mockCollector, id: id } as Collector);
 
   let state;
 
@@ -17,12 +20,12 @@ describe('Collectors Selectors', () => {
     state = {
       collectors: collectorsAdapter.setAll(
         [
-          createCollectorsEntity('PRODUCT-AAA'),
-          createCollectorsEntity('PRODUCT-BBB'),
-          createCollectorsEntity('PRODUCT-CCC'),
+          createCollector('PRODUCT-AAA'),
+          createCollector('PRODUCT-BBB'),
+          createCollector('PRODUCT-CCC'),
         ],
         {
-          ...initialState,
+          ...initialCollectorsState,
           selectedId: 'PRODUCT-BBB',
           error: ERROR_MSG,
           loaded: true,
@@ -41,7 +44,7 @@ describe('Collectors Selectors', () => {
     });
 
     it('getSelected() should return the selected Entity', () => {
-      const result = CollectorsSelectors.getSelected(state);
+      const result = CollectorsSelectors.getSelectedCollector(state);
       const selId = getCollectorsId(result);
 
       expect(selId).toBe('PRODUCT-BBB');
